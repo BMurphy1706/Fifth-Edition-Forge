@@ -8,12 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ddraft.api.DataRepository
 import com.example.ddraft.models.SRD.class_Elements.ClassListItem
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ForgeViewModel(
+@HiltViewModel
+class ForgeViewModel @Inject constructor(
     private val dataRepo: DataRepository
-): ViewModel(){
+):ViewModel(){
 
     private val _selectedStep = mutableIntStateOf(0)
     val selectedStep: State<Int> = _selectedStep
@@ -31,7 +34,6 @@ class ForgeViewModel(
 
     init {
         getClasses()
-        Log.d("Api class res", "${_classList.value}")
     }
 
     //Character basics

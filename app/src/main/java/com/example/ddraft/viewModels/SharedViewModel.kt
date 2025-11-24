@@ -75,7 +75,7 @@ class SharedVM: ViewModel(){
                 darkColor = Color(0xFF0B5BC5)   // Dark blue
             ),
             Character(
-                name = "Crimson Blade",
+                name = "Crimson Dawn",
                 iconId = R.drawable.search,
                 lightColor = Color(0xFFFF867C),  // Light red-orange
                 mediumColor = Color(0xFFE53935), // Mid red

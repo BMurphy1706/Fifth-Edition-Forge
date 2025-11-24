@@ -1,10 +1,8 @@
 package com.example.ddraft.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -35,15 +33,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.ddraft.R
+import com.example.ddraft.models.SRD.class_Elements.Class
+import com.example.ddraft.models.SRD.class_Elements.ClassListItem
 import com.example.ddraft.ui.theme.LightBlack
 import com.example.ddraft.viewModels.ForgeViewModel
 import com.example.ddraft.viewModels.SharedVM
-import kotlin.text.Typography.greaterOrEqual
-import kotlin.text.Typography.section
 
 @Composable
 fun ForgeScreen(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController) {
@@ -141,7 +137,7 @@ fun StepSection(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController){
             enter = slideInHorizontally() + fadeIn(),
             exit = slideOutHorizontally() + fadeOut()
         ){
-            ClassSection(forgeVM)
+            ClassSection(forgeVM, sharedVM)
         }
         AnimatedVisibility(
             visible = forgeVM.selectedStep.value==1,
@@ -175,7 +171,7 @@ fun StepSection(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController){
 }
 
 @Composable
-fun ClassSection(forgeVM: ForgeViewModel){
+fun ClassSection(forgeVM: ForgeViewModel, sharedVM: SharedVM){
     Column{
         Text(
             text="Choose a Class",
@@ -184,9 +180,45 @@ fun ClassSection(forgeVM: ForgeViewModel){
             color = Color.White,
             modifier = Modifier.padding(15.dp)
         )
-        LazyColumn{
-            //items(forgeVM.)
+        LazyColumn(Modifier.padding(bottom = 100.dp)){
+            items(forgeVM.classList.value.size){
+                ClassBox(
+                    classItem = forgeVM.classList.value[it],
+                    sharedVM = sharedVM
+                )
+            }
         }
+    }
+}
+
+@Composable
+fun ClassBox(
+    classItem: ClassListItem,
+    sharedVM: SharedVM
+){
+    Row(modifier = Modifier
+        .padding(15.dp)
+        .clip(RoundedCornerShape(10.dp))
+        .background(sharedVM.midColor.value)
+        .padding(horizontal = 15.dp , vertical = 20.dp)
+        .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ){
+        Box(
+            modifier = Modifier
+                .size(50.dp)
+                .background(sharedVM.brightColor.value)
+                .padding(5.dp),
+            contentAlignment = Alignment.Center
+        ){
+            Icon(
+                painter = painterResource(R.drawable.search),
+                contentDescription = "Class Icon",
+                Modifier.size(30.dp)
+            )
+        }
+        Text(classItem.name)
     }
 }
 
@@ -209,21 +241,51 @@ fun BackgroundSection(){
 
 @Composable
 fun SpeciesSection(){
-    Box(modifier = Modifier.background(Color.White) .height(100.dp)){
-        Text("Species section works")
+    Column{
+        Text(
+            text="Choose a Race",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(15.dp)
+        )
+
+        LazyColumn{
+
+        }
     }
 }
 
 @Composable
 fun AbilitySection(){
-    Box(modifier = Modifier.background(Color.White) .height(100.dp)){
-        Text("Ability section works")
+    Column{
+        Text(
+            text="Choose your Ability Scores",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(15.dp)
+        )
+
+        LazyColumn{
+
+        }
     }
 }
 
 @Composable
 fun EquipmentSection(){
-    Box(modifier = Modifier.background(Color.White) .height(100.dp)){
-        Text("Equipment section works")
+    Column{
+        Text(
+            text="Choose your Equipment",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(15.dp)
+        )
+
+        LazyColumn{
+
+        }
     }
 }

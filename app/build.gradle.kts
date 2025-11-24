@@ -52,6 +52,11 @@ dependencies {
     implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
     kapt("com.google.dagger:hilt-android-compiler:2.50")
 
+    implementation("androidx.navigation:navigation-compose:2.9.6")
+    implementation("androidx.fragment:fragment-ktx:1.5.7")
+
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
