@@ -1,5 +1,6 @@
 package com.example.ddraft.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -184,6 +185,7 @@ fun ClassSection(forgeVM: ForgeViewModel, sharedVM: SharedVM){
             items(forgeVM.classList.value.size){
                 ClassBox(
                     classItem = forgeVM.classList.value[it],
+                    forgeVM = forgeVM,
                     sharedVM = sharedVM
                 )
             }
@@ -194,6 +196,7 @@ fun ClassSection(forgeVM: ForgeViewModel, sharedVM: SharedVM){
 @Composable
 fun ClassBox(
     classItem: ClassListItem,
+    forgeVM: ForgeViewModel,
     sharedVM: SharedVM
 ){
     Row(modifier = Modifier
@@ -201,7 +204,11 @@ fun ClassBox(
         .clip(RoundedCornerShape(10.dp))
         .background(sharedVM.midColor.value)
         .padding(horizontal = 15.dp , vertical = 20.dp)
-        .fillMaxWidth(),
+        .fillMaxWidth()
+        .clickable { forgeVM.GetClass(classItem.index)
+            Log.d("Class item out", classItem.name)
+            forgeVM.classChoice.value?.let { Log.d("Class out", it.name) }
+        },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ){

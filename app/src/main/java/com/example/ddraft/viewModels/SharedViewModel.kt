@@ -51,7 +51,7 @@ class SharedVM: ViewModel(){
 
 
     //Demo data functions
-    fun demoCharacters(): List<Character> {
+    private fun demoCharacters(): List<Character> {
         val testCharacters = listOf(
             Character(
                 name = "Amber Knight",
@@ -92,7 +92,7 @@ class SharedVM: ViewModel(){
         return testCharacters
     }
 
-    fun navList():List<NavBarContent> {
+    private fun navList():List<NavBarContent> {
         val testNav = listOf(
             NavBarContent(
                 title = "Home",

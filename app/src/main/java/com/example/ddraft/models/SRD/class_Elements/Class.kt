@@ -11,6 +11,4 @@ data class Class(
     val profFrom: List<Skill>,
     val profCount: Int,
 
-
-
 )
