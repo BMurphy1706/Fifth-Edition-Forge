@@ -22,8 +22,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.ddraft.api.responses.ApiListItem
 import com.example.ddraft.models.ApiDemoData
-import com.example.ddraft.models.SRD.class_Elements.ClassListItem
 import com.example.ddraft.ui.ForgeScreen
 import com.example.ddraft.ui.HomeScreen
 import com.example.ddraft.ui.PortScreen
@@ -85,7 +85,7 @@ class LaunchPoint : ComponentActivity() {
     }
 
     @Composable
-    fun ClassItem(classData: ClassListItem){
+    fun ClassItem(classData: ApiListItem){
         Card(Modifier.padding(8.dp)){
             Column(Modifier.padding(16.dp)){
                 Text("Index: ${classData.index}")

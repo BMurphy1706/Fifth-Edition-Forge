@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ddraft.R
-import com.example.ddraft.models.SRD.character_Elements.Character
+import com.example.ddraft.models.Character
 import com.example.ddraft.ui.theme.LightBlack
 import com.example.ddraft.ui.util.standardQuadFromTo
 import com.example.ddraft.viewModels.SharedVM

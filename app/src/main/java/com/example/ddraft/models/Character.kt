@@ -1,4 +1,4 @@
-package com.example.ddraft.models.SRD.character_Elements
+package com.example.ddraft.models
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color

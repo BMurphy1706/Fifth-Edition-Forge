@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.runtime.State
-import com.example.ddraft.models.SRD.class_Elements.ClassListItem
+import com.example.ddraft.api.responses.ApiListItem
 
 
 @HiltViewModel
@@ -21,8 +21,8 @@ class DemoVM @Inject constructor(
     private val _postList = mutableStateOf<List<ApiDemoData>>(emptyList())
     val demoList: State<List<ApiDemoData>> = _postList
 
-    private val _classList = mutableStateOf<List<ClassListItem>>(emptyList())
-    val classList: State<List<ClassListItem>> = _classList
+    private val _classList = mutableStateOf<List<ApiListItem>>(emptyList())
+    val classList: State<List<ApiListItem>> = _classList
 
     init {
         getDemo()

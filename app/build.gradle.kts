@@ -1,8 +1,9 @@
+import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -43,19 +44,15 @@ android {
 }
 
 dependencies {
-    //Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
 
-    //Hilt
-    implementation("com.google.dagger:hilt-android:2.50")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
-    kapt("com.google.dagger:hilt-android-compiler:2.50")
+    implementation("com.google.dagger:hilt-android:2.57.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    kapt("com.google.dagger:hilt-android-compiler:2.57.2")
 
     implementation("androidx.navigation:navigation-compose:2.9.6")
-    implementation("androidx.fragment:fragment-ktx:1.5.7")
-
-
+    implementation("androidx.fragment:fragment-ktx:1.8.9")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

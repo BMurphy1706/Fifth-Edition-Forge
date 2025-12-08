@@ -1,14 +1,13 @@
 package com.example.ddraft.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ddraft.api.DataRepository
+import com.example.ddraft.api.responses.ApiListItem
 import com.example.ddraft.models.SRD.class_Elements.Class
-import com.example.ddraft.models.SRD.class_Elements.ClassListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +31,8 @@ class ForgeViewModel @Inject constructor(
     val classChoice: State<Class?> = _classChoice
 
     //Api calls
-    private val _classList = mutableStateOf<List<ClassListItem>>(emptyList())
-    val classList: State<List<ClassListItem>> = _classList
+    private val _classList = mutableStateOf<List<ApiListItem>>(emptyList())
+    val classList: State<List<ApiListItem>> = _classList
 
     private fun getClasses(){
         viewModelScope.launch (Dispatchers.IO){

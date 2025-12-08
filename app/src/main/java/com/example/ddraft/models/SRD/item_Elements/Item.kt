@@ -1,9 +1,9 @@
 package com.example.ddraft.models.SRD.item_Elements
 
-open class Item(
-    name:String,
-    val description: String,
-    val weight: Float,
-    val costAmount: Int,
-    val costType: String,
+data class Item(
+    val index: String,
+    val name: String,
+    val desc: List<String>,
+    val weight: Double?,
+    val cost: Cost
 )

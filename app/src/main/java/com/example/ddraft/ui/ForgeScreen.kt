@@ -36,8 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ddraft.R
-import com.example.ddraft.models.SRD.class_Elements.Class
-import com.example.ddraft.models.SRD.class_Elements.ClassListItem
+import com.example.ddraft.api.responses.ApiListItem
 import com.example.ddraft.ui.theme.LightBlack
 import com.example.ddraft.viewModels.ForgeViewModel
 import com.example.ddraft.viewModels.SharedVM
@@ -195,7 +194,7 @@ fun ClassSection(forgeVM: ForgeViewModel, sharedVM: SharedVM){
 
 @Composable
 fun ClassBox(
-    classItem: ClassListItem,
+    classItem: ApiListItem,
     forgeVM: ForgeViewModel,
     sharedVM: SharedVM
 ){

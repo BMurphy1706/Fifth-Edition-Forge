@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.example.ddraft.R
 import com.example.ddraft.models.NavBarContent
-import com.example.ddraft.models.SRD.character_Elements.Character
+import com.example.ddraft.models.Character
 import com.example.ddraft.ui.theme.OrangeB
 import com.example.ddraft.ui.theme.OrangeD
 import com.example.ddraft.ui.theme.OrangeM
