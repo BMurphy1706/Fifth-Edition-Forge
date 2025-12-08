@@ -21,7 +21,7 @@ interface ApiService {
 
     @GET("classes/{toGet}")
     suspend fun getClass(@Path("toGet") toGet:String): Class?
-    /*
+
     @GET("classes/{toGet}/levels")
     suspend fun getLevels(@Path("toGet") toGet:String): ApiRef
 
@@ -38,7 +38,7 @@ interface ApiService {
     suspend fun getBG(@Path("toGet") toGet:String): Background?
 
     @GET("spells")
-    suspend fun getSpellsList(): ApiRef
+    suspend fun getSpellList(): ApiRef
 
     @GET("spells/{toGet}")
     suspend fun getSpell(@Path("toGet") toGet:String): Spell?
@@ -51,5 +51,4 @@ interface ApiService {
 
     @GET("equipment/{toGet}")
     suspend fun getItem(@Path("toGet") toGet:String): Item?
-     */
 }
