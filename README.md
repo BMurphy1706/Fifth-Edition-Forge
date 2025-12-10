@@ -12,7 +12,7 @@ It contains styled boxes for each character displayed in which the colour scheme
 
 At the very top of the screen there is a search function that takes in a string input and will filter the contents loaded from the DB to return only characters whose names and or class match the user's input. This is a simple albeit very useful sorting mechanism.
 
-# Character Details Screen
+# Character Details Screen - sharedVM
 No fancy name for this one as it has no navigation label per say, instead you access it either on creation of a character or by clicking on one of the character boxes present in the Tavern screen.
 
 This displays a list of all the information collected about the character from their creation in a clean and concise way once again building off of my dynamic UI colour-scheme system.
