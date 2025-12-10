@@ -113,7 +113,7 @@ private fun HeaderSection(
         ){
             val classTheme = ClassTheme.getTheme(forgeVM.classChoice.value?.name?:"")
             Image(
-                painter = painterResource(classTheme?.iconRes?:sharedVM.current.value.iconRes),
+                painter = painterResource(classTheme?.iconRes?:sharedVM.current.value?.iconRes?:R.drawable.barbarian),
                 contentDescription = "Class Icon",
                 Modifier.size(30.dp)
             )

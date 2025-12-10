@@ -308,8 +308,7 @@ fun ConfirmButton(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController
             forgeVM.onClassChoice()
             forgeVM.onBgChoice()
             forgeVM.onRaceChosen()
-            sharedVM.addNewCharacter(forgeVM)
-            nc.navigate("details")
+            sharedVM.addNewCharacter(forgeVM,{nc.navigate("details")})
         }
     ){
         Text(

@@ -6,14 +6,25 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.ddraft.R
+import com.example.ddraft.db.CharacterDAO
+import com.example.ddraft.models.Character
 import com.example.ddraft.models.EquipmentItem
 import com.example.ddraft.models.NavBarContent
-import com.example.ddraft.models.Character
-import com.example.ddraft.ui.theme.*
-import com.example.ddraft.viewModels.ForgeViewModel
+import com.example.ddraft.ui.theme.ClassTheme
+import com.example.ddraft.ui.theme.OrangeB
+import com.example.ddraft.ui.theme.OrangeD
+import com.example.ddraft.ui.theme.OrangeM
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SharedVM: ViewModel() {
+@HiltViewModel
+class SharedVM @Inject constructor(
+    private val characterDao: CharacterDAO
+) : ViewModel() {
     private val _brightColor = mutableStateOf(OrangeB)
     val brightColor: State<Color> = _brightColor
 
@@ -29,14 +40,26 @@ class SharedVM: ViewModel() {
     private val _navIndex = mutableIntStateOf(0)
     val navIndex: State<Int> = _navIndex
 
-    private val _characters = mutableStateOf<List<Character>>(demoCharacters())
+    private val _characters = mutableStateOf<List<Character>>(emptyList())
     val characters: State<List<Character>> = _characters
 
-    private val _current = mutableStateOf<Character>(demoCharacters()[0])
-    val current: State<Character> = _current
+    private val _current = mutableStateOf<Character?>(null)
+    val current: State<Character?> = _current
 
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
+
+    init {
+        viewModelScope.launch {
+            characterDao.getCharacters().collectLatest { list ->
+                _characters.value = list
+                if (_current.value == null && list.isNotEmpty()) {
+                    _current.value = list.first()
+                    updateColorsFromClass(list.first().className)
+                }
+            }
+        }
+    }
 
     fun onCurrentChange(newCurrent: Character) {
         _current.value = newCurrent
@@ -47,10 +70,9 @@ class SharedVM: ViewModel() {
         _searchQuery.value = newQuery
     }
 
-    fun addNewCharacter(forgeVM: ForgeViewModel) {
+    fun addNewCharacter(forgeVM: ForgeViewModel, onAdded: (() -> Unit)? = null) {
         val classTheme = ClassTheme.getTheme(forgeVM.classChoice.value?.name ?: "")
 
-        // Convert Pair<ApiListItem, Int> to EquipmentItem for serialization
         val equipmentList = forgeVM.selectedEquipment.value.map { (item, quantity) ->
             EquipmentItem(item.index, item.name, item.url, quantity)
         }
@@ -78,15 +100,24 @@ class SharedVM: ViewModel() {
             darkColor = classTheme?.dark ?: OrangeD
         )
 
-        val updatedList = listOf(newChar) + _characters.value
-        _characters.value = updatedList
+        viewModelScope.launch {
+            characterDao.insertCharacter(newChar)
+            onCurrentChange(newChar)
+            onAdded?.invoke()
+        }
         Log.d("Char created", "${newChar.name} with ${newChar.selectedEquipment.size} items")
-        onCurrentChange(newChar)
+    }
+
+    fun deleteCharacter(character: Character) {
+        viewModelScope.launch {
+            characterDao.deleteCharacter(character)
+        }
     }
 
     fun importCharacter(importedChar: Character) {
-        val updatedList = listOf(importedChar) + _characters.value
-        _characters.value = updatedList
+        viewModelScope.launch {
+            characterDao.insertCharacter(importedChar)
+        }
         onCurrentChange(importedChar)
         Log.d("Char imported", "${importedChar.name} with ${importedChar.selectedEquipment.size} items")
     }
@@ -99,29 +130,6 @@ class SharedVM: ViewModel() {
             _midColor.value = theme.medium
             _darkColor.value = theme.dark
         }
-    }
-
-    private fun demoCharacters(): List<Character> {
-        return listOf(
-            Character(
-                name = "Amber Knight",
-                raceName = "Human",
-                className = "Barbarian",
-                iconRes = R.drawable.barbarian,
-                lightColor = BarbarianLight,
-                mediumColor = BarbarianMedium,
-                darkColor = BarbarianDark
-            ),
-            Character(
-                name = "Golden Sage",
-                raceName = "Elf",
-                className = "Cleric",
-                iconRes = R.drawable.cleric,
-                lightColor = ClericLight,
-                mediumColor = ClericMedium,
-                darkColor = ClericDark
-            )
-        )
     }
 
     private fun navList(): List<NavBarContent> = listOf(

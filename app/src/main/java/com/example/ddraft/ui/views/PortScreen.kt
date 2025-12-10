@@ -35,7 +35,7 @@ fun PortScreen(portVM: PortViewModel, sharedVM: SharedVM, navController: NavCont
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
     ) { uri: Uri? ->
-        uri?.let { portVM.exportCharacter(context, it, currentCharacter) }
+        uri?.let { portVM.exportCharacter(context, it, currentCharacter?:return@let) }
     }
 
     val importLauncher = rememberLauncherForActivityResult(
@@ -70,7 +70,7 @@ fun PortScreen(portVM: PortViewModel, sharedVM: SharedVM, navController: NavCont
             PortButtons(
                 sharedVM = sharedVM,
                 currentCharacter = currentCharacter,
-                onExport = { exportLauncher.launch("${currentCharacter.name}.json") },
+                onExport = { exportLauncher.launch("${currentCharacter?.name ?: "Character"}.json") },
                 onImport = { importLauncher.launch("application/json") },
                 onClear = { portVM.clearMessages() }
             )
@@ -116,7 +116,7 @@ private fun PortHeader(sharedVM: SharedVM) {
 @Composable
 private fun PortButtons(
     sharedVM: SharedVM,
-    currentCharacter: Character,
+    currentCharacter: Character?,
     onExport: () -> Unit,
     onImport: () -> Unit,
     onClear: () -> Unit
@@ -136,7 +136,7 @@ private fun PortButtons(
             onClick = onExport
         ) {
             Text(
-                text = "Export ${currentCharacter.name}",
+                text = "Export ${currentCharacter?.name ?: "Character"}",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 color = sharedVM.darkColor.value,

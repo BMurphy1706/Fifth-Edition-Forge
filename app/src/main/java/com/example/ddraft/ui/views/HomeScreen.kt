@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,32 +42,36 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ddraft.R
 import com.example.ddraft.models.Character
-import com.example.ddraft.ui.util.NavMenu
 import com.example.ddraft.ui.theme.LightBlack
+import com.example.ddraft.ui.util.NavMenu
 import com.example.ddraft.ui.util.standardQuadFromTo
 import com.example.ddraft.viewModels.SharedVM
 
 @Composable
-fun HomeScreen(sharedVM: SharedVM, nc:NavController){
+fun HomeScreen(sharedVM: SharedVM, nc: NavController) {
     val allCharacters by sharedVM.characters
     val searchQuery by sharedVM.searchQuery
+    val current by sharedVM.current
+
+    sharedVM.updateColorsFromClass(current?.className?:"barbarian")
 
     val filteredCharacters = allCharacters.filter {
         it.name.contains(searchQuery, ignoreCase = true) ||
                 it.className.contains(searchQuery, ignoreCase = true)
     }
 
-    Box(modifier = Modifier
-        .background(LightBlack)
-        .fillMaxSize()
-    ){
-        Column{
+    Box(
+        modifier = Modifier
+            .background(LightBlack)
+            .fillMaxSize()
+    ) {
+        Column {
             Spacer(Modifier.height(35.dp))
             SearchSection(
                 query = searchQuery,
                 onQueryChange = sharedVM::updateSearchQuery
             )
-            CurrentCharacterSection(sharedVM,nc)
+            CurrentCharacterSection(current, sharedVM, nc)
             CharacterSection(filteredCharacters, sharedVM, nc)
         }
         NavMenu(
@@ -95,8 +98,7 @@ fun SearchSection(
         Image(
             painter = painterResource(R.drawable.logo),
             contentDescription = "Logo",
-            modifier = Modifier
-                .size(80.dp)
+            modifier = Modifier.size(80.dp)
         )
         Spacer(Modifier.width(10.dp))
         OutlinedTextField(
@@ -114,41 +116,43 @@ fun SearchSection(
 
 @Composable
 fun CurrentCharacterSection(
+    current: Character?,
     sharedVM: SharedVM,
     nc: NavController
-){
-    Row(modifier = Modifier
-        .padding(15.dp)
-        .clip(RoundedCornerShape(10.dp))
-        .background(sharedVM.midColor.value)
-        .padding(horizontal = 15.dp , vertical = 20.dp)
-        .fillMaxWidth()
-        .clickable { nc.navigate("details") },
+) {
+    Row(
+        modifier = Modifier
+            .padding(15.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(sharedVM.midColor.value)
+            .padding(horizontal = 15.dp, vertical = 20.dp)
+            .fillMaxWidth()
+            .clickable { nc.navigate("details") },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .size(50.dp)
                 .background(sharedVM.brightColor.value)
                 .padding(5.dp),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Image(
-                painter = painterResource(sharedVM.current.value.iconRes),
+                painter = painterResource(current?.iconRes ?: R.drawable.barbarian),
                 contentDescription = "Class Icon",
                 Modifier.size(30.dp)
             )
         }
-        Column{
+        Column {
             Text(
-                text = sharedVM.current.value.name,
+                text = current?.name ?: "N/A",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = "Lv ${sharedVM.current.value.level} ${sharedVM.current.value.raceName} ${sharedVM.current.value.className}",
+                text = "Lv ${current?.level ?: 1} ${current?.raceName ?: "Human"} ${current?.className ?: "Barbarian"}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.White
@@ -162,10 +166,10 @@ fun CharacterSection(
     characters: List<Character>,
     sharedVM: SharedVM,
     nc: NavController
-){
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text="Featured Characters",
+            text = "Featured Characters",
             color = Color.White,
             fontSize = 25.sp,
             fontWeight = FontWeight.Bold,
@@ -174,10 +178,10 @@ fun CharacterSection(
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp, bottom = 100.dp),
-            modifier=Modifier.fillMaxHeight()
-        ){
+            modifier = Modifier.fillMaxHeight()
+        ) {
             items(characters) { character ->
-                CharacterBox(character=character, sharedVM, nc)
+                CharacterBox(character = character, sharedVM, nc)
             }
         }
     }
@@ -188,7 +192,7 @@ fun CharacterBox(
     character: Character,
     sharedVM: SharedVM,
     nc: NavController
-){
+) {
     BoxWithConstraints(
         modifier = Modifier
             .padding(7.5.dp)
@@ -199,7 +203,7 @@ fun CharacterBox(
                 sharedVM.onCurrentChange(character)
                 nc.navigate("details")
             }
-    ){
+    ) {
         val width = constraints.maxWidth
         val height = constraints.maxHeight
 
@@ -236,25 +240,19 @@ fun CharacterBox(
             lineTo(-100f, height.toFloat() + 100f)
             close()
         }
-        Canvas(
+
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawPath(path = mediumColoredPath, color = character.mediumColor)
+            drawPath(path = lightColoredPath, color = character.lightColor)
+        }
+
+        Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(15.dp)
         ) {
-            drawPath(
-                path = mediumColoredPath,
-                color = character.mediumColor
-            )
-            drawPath(
-                path = lightColoredPath,
-                color = character.lightColor
-            )
-        }
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(15.dp)
-        ){
             Image(
-                painter = painterResource(character.iconRes),
+                painter = painterResource(character.iconRes ?: R.drawable.search),
                 contentDescription = "Class Icon",
                 modifier = Modifier
                     .size(60.dp)
@@ -275,7 +273,7 @@ fun CharacterBox(
                 color = character.darkColor,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(0.dp,10.dp)
+                    .offset(0.dp, 10.dp)
             )
         }
     }

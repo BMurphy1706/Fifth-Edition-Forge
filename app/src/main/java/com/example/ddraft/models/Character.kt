@@ -2,10 +2,16 @@ package com.example.ddraft.models
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.example.ddraft.api.responses.ApiListItem
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "characters")
 data class Character(
+
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
     val name: String = "My New Character",
     val raceName: String = "",
     val className: String = "",
@@ -33,17 +39,18 @@ data class Character(
     //UI
     val iconRes: Int,
     @SerializedName("lightColorArgb")
-    private val lightColorArgb: Int,
+    val lightColorArgb: Int,
     @SerializedName("mediumColorArgb")
-    private val mediumColorArgb: Int,
+    val mediumColorArgb: Int,
     @SerializedName("darkColorArgb")
-    private val darkColorArgb: Int
+    val darkColorArgb: Int
 ) {
     val lightColor: Color get() = Color(lightColorArgb)
     val mediumColor: Color get() = Color(mediumColorArgb)
     val darkColor: Color get() = Color(darkColorArgb)
 
     constructor(
+        id: Int = 0,
         name: String = "My New Character",
         raceName: String = "",
         className: String = "",
@@ -65,7 +72,7 @@ data class Character(
         mediumColor: Color = Color.Unspecified,
         darkColor: Color = Color.Unspecified
     ) : this(
-        name, raceName, className, backgroundName, alignment, level,
+        id,name, raceName, className, backgroundName, alignment, level,
         strength, dexterity, constitution, intelligence, wisdom, charisma,
         goldPieces, silverPieces, copperPieces, selectedEquipment,
         iconRes, lightColor.toArgb(), mediumColor.toArgb(), darkColor.toArgb()
