@@ -1,4 +1,4 @@
-package com.example.ddraft.ui
+package com.example.ddraft.ui.util
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -81,10 +81,10 @@ fun NavBarItem(
             contentAlignment = Alignment.Center
         ){
             Icon(
-                painter = painterResource(R.drawable.search),
+                painter = painterResource(item.icon),
                 contentDescription = item.title,
                 tint = (if(isSelected) activeTextColor else inactiveTextColor),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(40.dp)
             )
         }
         Text(

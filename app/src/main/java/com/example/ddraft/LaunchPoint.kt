@@ -24,11 +24,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.ddraft.api.responses.ApiListItem
 import com.example.ddraft.models.ApiDemoData
-import com.example.ddraft.ui.ForgeScreen
-import com.example.ddraft.ui.HomeScreen
-import com.example.ddraft.ui.PortScreen
+import com.example.ddraft.ui.views.ForgeScreen
+import com.example.ddraft.ui.views.HomeScreen
+import com.example.ddraft.ui.views.PortScreen
 import com.example.ddraft.ui.theme.DDraftTheme
+import com.example.ddraft.ui.views.DetailsScreen
+import com.example.ddraft.ui.views.DiceScreen
 import com.example.ddraft.viewModels.DemoVM
+import com.example.ddraft.viewModels.DiceViewModel
 import com.example.ddraft.viewModels.ForgeViewModel
 import com.example.ddraft.viewModels.PortViewModel
 import com.example.ddraft.viewModels.SharedVM
@@ -44,6 +47,7 @@ class LaunchPoint : ComponentActivity() {
 
         val sharedVM = SharedVM()
         val portVM = PortViewModel()
+        val dVM = DiceViewModel()
         setContent {
             val nc = rememberNavController()
             DDraftTheme {
@@ -53,6 +57,8 @@ class LaunchPoint : ComponentActivity() {
                         val forgeVM: ForgeViewModel = hiltViewModel(navBackStackEntry)
                         ForgeScreen(forgeVM, sharedVM, nc) }
                     composable("port"){ PortScreen(portVM, sharedVM, nc) }
+                    composable("dice"){ DiceScreen(dVM, sharedVM, nc) }
+                    composable("details"){DetailsScreen(sharedVM, nc) }
                 }
                 //DemoScreen()
             }

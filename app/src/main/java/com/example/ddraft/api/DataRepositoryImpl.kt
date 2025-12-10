@@ -6,6 +6,7 @@ import com.example.ddraft.models.ApiDemoData
 import com.example.ddraft.models.SRD.character_Elements.Background
 import com.example.ddraft.models.SRD.character_Elements.Race
 import com.example.ddraft.models.SRD.class_Elements.Class
+import com.example.ddraft.models.SRD.class_Elements.ClassFeature
 import com.example.ddraft.models.SRD.item_Elements.Item
 import com.example.ddraft.models.SRD.spell_Elements.Spell
 
@@ -23,4 +24,5 @@ interface DataRepositoryImpl {
     suspend fun getCategories(): List<ApiListItem>
     suspend fun getItemList(toGet: String): List<ApiListItem>
     suspend fun getItem(toGet: String): Item?
+    suspend fun getFeature(toGet: String): ClassFeature?
 }

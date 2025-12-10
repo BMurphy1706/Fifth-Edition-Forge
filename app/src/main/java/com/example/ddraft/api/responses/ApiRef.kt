@@ -2,5 +2,6 @@ package com.example.ddraft.api.responses
 
 data class ApiRef(
     val count: Int,
-    val results: List<ApiListItem>
+    val results: List<ApiListItem>,
+    val equipment: List<ApiListItem>? = null
 )

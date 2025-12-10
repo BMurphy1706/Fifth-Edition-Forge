@@ -9,7 +9,8 @@ data class Class(
     val hit_die: Int,
     val proficiencies: List<Proficiency>,
     val saving_throws: List<AbilityScore>,
-    val subclasses: List<Subclass>
+    val subclasses: List<Subclass>,
+    val features: List<ClassFeature>? = emptyList()
 )
 
 data class Subclass(

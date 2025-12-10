@@ -1,4 +1,4 @@
-package com.example.ddraft.ui
+package com.example.ddraft.ui.views
 
 import androidx.compose.runtime.Composable
 

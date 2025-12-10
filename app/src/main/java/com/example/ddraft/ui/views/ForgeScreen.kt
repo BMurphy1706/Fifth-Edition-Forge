@@ -1,11 +1,11 @@
-package com.example.ddraft.ui
+package com.example.ddraft.ui.views
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ddraft.R
-import com.example.ddraft.api.responses.ApiListItem
+import com.example.ddraft.ui.ForgeSections.AbilityScoresSection
+import com.example.ddraft.ui.ForgeSections.BackgroundSection
+import com.example.ddraft.ui.ForgeSections.ClassSection
+import com.example.ddraft.ui.ForgeSections.EquipmentSection
+import com.example.ddraft.ui.ForgeSections.SpeciesSection
+import com.example.ddraft.ui.theme.ClassTheme
+import com.example.ddraft.ui.util.NavMenu
 import com.example.ddraft.ui.theme.LightBlack
 import com.example.ddraft.viewModels.ForgeViewModel
 import com.example.ddraft.viewModels.SharedVM
@@ -62,7 +68,7 @@ fun ForgeScreen(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController) 
 }
 
 @Composable
-fun StepSelection(
+private fun StepSelection(
     forgeVM: ForgeViewModel,
     sharedVM: SharedVM,
     steps: List<String>
@@ -85,7 +91,7 @@ fun StepSelection(
 }
 
 @Composable
-fun HeaderSection(
+private fun HeaderSection(
     forgeVM: ForgeViewModel,
     sharedVM: SharedVM
 ){
@@ -105,8 +111,9 @@ fun HeaderSection(
                 .padding(5.dp),
             contentAlignment = Alignment.Center
         ){
-            Icon(
-                painter = painterResource(R.drawable.search),
+            val classTheme = ClassTheme.getTheme(forgeVM.classChoice.value?.name?:"")
+            Image(
+                painter = painterResource(classTheme?.iconRes?:sharedVM.current.value.iconRes),
                 contentDescription = "Class Icon",
                 Modifier.size(30.dp)
             )
@@ -129,7 +136,7 @@ fun HeaderSection(
 }
 
 @Composable
-fun StepSection(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController){
+private fun StepSection(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController){
     Column(modifier = Modifier
         .padding(start = 7.5.dp, end = 7.5.dp)){
         AnimatedVisibility(
@@ -144,154 +151,28 @@ fun StepSection(forgeVM: ForgeViewModel, sharedVM: SharedVM, nc: NavController){
             enter = slideInHorizontally() + fadeIn(),
             exit = slideOutHorizontally() + fadeOut()
         ){
-            BackgroundSection()
+            BackgroundSection(forgeVM, sharedVM)
         }
         AnimatedVisibility(
             visible = forgeVM.selectedStep.value==2,
             enter = slideInHorizontally() + fadeIn(),
             exit = slideOutHorizontally() + fadeOut()
         ){
-            SpeciesSection()
+            SpeciesSection(forgeVM, sharedVM)
         }
         AnimatedVisibility(
             visible = forgeVM.selectedStep.value==3,
             enter = slideInHorizontally() + fadeIn(),
             exit = slideOutHorizontally() + fadeOut()
         ){
-            AbilitySection()
+            AbilityScoresSection(forgeVM, sharedVM)
         }
         AnimatedVisibility(
             visible = forgeVM.selectedStep.value==4,
             enter = slideInHorizontally() + fadeIn(),
             exit = slideOutHorizontally() + fadeOut()
         ){
-            EquipmentSection()
-        }
-    }
-}
-
-@Composable
-fun ClassSection(forgeVM: ForgeViewModel, sharedVM: SharedVM){
-    Column{
-        Text(
-            text="Choose a Class",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(15.dp)
-        )
-        LazyColumn(Modifier.padding(bottom = 100.dp)){
-            items(forgeVM.classList.value.size){
-                ClassBox(
-                    classItem = forgeVM.classList.value[it],
-                    forgeVM = forgeVM,
-                    sharedVM = sharedVM
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ClassBox(
-    classItem: ApiListItem,
-    forgeVM: ForgeViewModel,
-    sharedVM: SharedVM
-){
-    Row(modifier = Modifier
-        .padding(15.dp)
-        .clip(RoundedCornerShape(10.dp))
-        .background(sharedVM.midColor.value)
-        .padding(horizontal = 15.dp , vertical = 20.dp)
-        .fillMaxWidth()
-        .clickable { forgeVM.GetClass(classItem.index)
-            Log.d("Class item out", classItem.name)
-            forgeVM.classChoice.value?.let { Log.d("Class out", it.name) }
-        },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ){
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .background(sharedVM.brightColor.value)
-                .padding(5.dp),
-            contentAlignment = Alignment.Center
-        ){
-            Icon(
-                painter = painterResource(R.drawable.search),
-                contentDescription = "Class Icon",
-                Modifier.size(30.dp)
-            )
-        }
-        Text(classItem.name)
-    }
-}
-
-@Composable
-fun BackgroundSection(){
-    Column{
-        Text(
-            text="Choose a Background",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(15.dp)
-        )
-
-        LazyColumn{
-
-        }
-    }
-}
-
-@Composable
-fun SpeciesSection(){
-    Column{
-        Text(
-            text="Choose a Race",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(15.dp)
-        )
-
-        LazyColumn{
-
-        }
-    }
-}
-
-@Composable
-fun AbilitySection(){
-    Column{
-        Text(
-            text="Choose your Ability Scores",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(15.dp)
-        )
-
-        LazyColumn{
-
-        }
-    }
-}
-
-@Composable
-fun EquipmentSection(){
-    Column{
-        Text(
-            text="Choose your Equipment",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(15.dp)
-        )
-
-        LazyColumn{
-
+            EquipmentSection(forgeVM, sharedVM, nc)
         }
     }
 }

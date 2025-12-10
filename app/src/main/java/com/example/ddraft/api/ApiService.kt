@@ -1,11 +1,13 @@
 package com.example.ddraft.api
 
+import com.example.ddraft.api.responses.ApiListItem
 import com.example.ddraft.api.responses.ApiRef
 import com.example.ddraft.models.ApiDemoData
 import com.example.ddraft.models.SRD.spell_Elements.Spell
 import com.example.ddraft.models.SRD.character_Elements.Background
 import com.example.ddraft.models.SRD.character_Elements.Race
 import com.example.ddraft.models.SRD.class_Elements.Class
+import com.example.ddraft.models.SRD.class_Elements.ClassFeature
 import com.example.ddraft.models.SRD.item_Elements.Item
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -51,4 +53,7 @@ interface ApiService {
 
     @GET("equipment/{toGet}")
     suspend fun getItem(@Path("toGet") toGet:String): Item?
+
+    @GET("features/{toGet}")
+    suspend fun getFeature(@Path("toGet") toGet: String): ClassFeature?
 }

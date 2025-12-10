@@ -1,21 +1,73 @@
 package com.example.ddraft.models
 
-import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import com.example.ddraft.api.responses.ApiListItem
+import com.google.gson.annotations.SerializedName
 
 data class Character(
-    val name: String,
-    @DrawableRes val iconId: Int,
-    //Move these to class when done
-    val lightColor: Color,
-    val mediumColor: Color,
-    val darkColor: Color,
+    val name: String = "My New Character",
+    val raceName: String = "",
+    val className: String = "",
+    val backgroundName: String = "",
+    val alignment: String = "",
+    val level: Int = 1,
 
-    //instance of a given class with relevant choices
-    /*val background: Background,
-    val alignment: Alignment,
-    val money: List<Int>, //bp, sp, gp
-    val species: Species,
-    val scores: List<AbilityScore>,
-    val inventory: List<Item>*/
-)
+    // Ability Scores
+    val strength: Int = 8,
+    val dexterity: Int = 8,
+    val constitution: Int = 8,
+    val intelligence: Int = 8,
+    val wisdom: Int = 8,
+    val charisma: Int = 8,
+
+    // Currency
+    val goldPieces: String = "0",
+    val silverPieces: String = "0",
+    val copperPieces: String = "0",
+
+    // Equipment - Changed to EquipmentItem
+    @SerializedName("selectedEquipment")
+    val selectedEquipment: List<EquipmentItem> = emptyList(),
+
+    //UI
+    val iconRes: Int,
+    @SerializedName("lightColorArgb")
+    private val lightColorArgb: Int,
+    @SerializedName("mediumColorArgb")
+    private val mediumColorArgb: Int,
+    @SerializedName("darkColorArgb")
+    private val darkColorArgb: Int
+) {
+    val lightColor: Color get() = Color(lightColorArgb)
+    val mediumColor: Color get() = Color(mediumColorArgb)
+    val darkColor: Color get() = Color(darkColorArgb)
+
+    constructor(
+        name: String = "My New Character",
+        raceName: String = "",
+        className: String = "",
+        backgroundName: String = "",
+        alignment: String = "",
+        level: Int = 1,
+        strength: Int = 8,
+        dexterity: Int = 8,
+        constitution: Int = 8,
+        intelligence: Int = 8,
+        wisdom: Int = 8,
+        charisma: Int = 8,
+        goldPieces: String = "0",
+        silverPieces: String = "0",
+        copperPieces: String = "0",
+        selectedEquipment: List<EquipmentItem> = emptyList(),
+        iconRes: Int = 0,
+        lightColor: Color = Color.Unspecified,
+        mediumColor: Color = Color.Unspecified,
+        darkColor: Color = Color.Unspecified
+    ) : this(
+        name, raceName, className, backgroundName, alignment, level,
+        strength, dexterity, constitution, intelligence, wisdom, charisma,
+        goldPieces, silverPieces, copperPieces, selectedEquipment,
+        iconRes, lightColor.toArgb(), mediumColor.toArgb(), darkColor.toArgb()
+    )
+}

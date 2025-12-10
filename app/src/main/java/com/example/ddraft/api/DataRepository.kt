@@ -2,10 +2,12 @@ package com.example.ddraft.api
 
 import android.util.Log
 import com.example.ddraft.api.responses.ApiListItem
+import com.example.ddraft.api.responses.ApiRef
 import com.example.ddraft.models.ApiDemoData
 import com.example.ddraft.models.SRD.character_Elements.Background
 import com.example.ddraft.models.SRD.character_Elements.Race
 import com.example.ddraft.models.SRD.class_Elements.Class
+import com.example.ddraft.models.SRD.class_Elements.ClassFeature
 import com.example.ddraft.models.SRD.item_Elements.Item
 import com.example.ddraft.models.SRD.spell_Elements.Spell
 import javax.inject.Inject
@@ -69,12 +71,13 @@ class DataRepository @Inject constructor(
     }
 
     override suspend fun getBGList(): List<ApiListItem> {
-       return try{
-           apiService.getBGList().results
-       }catch (e: Exception){
-           Log.d("Api errro", "${e.message}")
-           emptyList()
-       }
+        return try {
+            val apiRef = apiService.getBGList()
+            apiRef?.results ?: emptyList()
+        } catch (e: Exception) {
+            Log.d("Api error", "${e.message}")
+            emptyList()
+        }
     }
 
     override suspend fun getBG(toGet: String): Background? {
@@ -114,17 +117,28 @@ class DataRepository @Inject constructor(
     }
 
     override suspend fun getItemList(toGet: String): List<ApiListItem> {
-        return try{
-            apiService.getItemList(toGet).results
-        }catch (e:Exception){
+        return try {
+            val equipment = apiService.getItemList(toGet).equipment
+            equipment ?: emptyList()  // ← Safe null handling
+        } catch (e: Exception) {
             Log.d("Api error", "${e.message}")
             emptyList()
         }
     }
 
+
     override suspend fun getItem(toGet: String): Item? {
        return try {
            apiService.getItem(toGet)
+       }catch (e:Exception){
+           Log.d("Api error", "${e.message}")
+           null
+       }
+    }
+
+    override suspend fun getFeature(toGet: String): ClassFeature? {
+       return try{
+           apiService.getFeature(toGet)
        }catch (e:Exception){
            Log.d("Api error", "${e.message}")
            null

@@ -1,6 +1,7 @@
-package com.example.ddraft.ui
+package com.example.ddraft.ui.views
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,12 +19,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,27 +36,40 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.ddraft.R
 import com.example.ddraft.models.Character
+import com.example.ddraft.ui.util.NavMenu
 import com.example.ddraft.ui.theme.LightBlack
 import com.example.ddraft.ui.util.standardQuadFromTo
 import com.example.ddraft.viewModels.SharedVM
 
 @Composable
 fun HomeScreen(sharedVM: SharedVM, nc:NavController){
+    val allCharacters by sharedVM.characters
+    val searchQuery by sharedVM.searchQuery
+
+    val filteredCharacters = allCharacters.filter {
+        it.name.contains(searchQuery, ignoreCase = true) ||
+                it.className.contains(searchQuery, ignoreCase = true)
+    }
+
     Box(modifier = Modifier
         .background(LightBlack)
         .fillMaxSize()
     ){
         Column{
             Spacer(Modifier.height(35.dp))
-            SearchSection()
-            CurrentCharacterSection(sharedVM.current.value)
-            CharacterSection(sharedVM)
+            SearchSection(
+                query = searchQuery,
+                onQueryChange = sharedVM::updateSearchQuery
+            )
+            CurrentCharacterSection(sharedVM,nc)
+            CharacterSection(filteredCharacters, sharedVM, nc)
         }
         NavMenu(
             sharedVM,
@@ -62,62 +80,93 @@ fun HomeScreen(sharedVM: SharedVM, nc:NavController){
 }
 
 @Composable
-fun SearchSection(){
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(15.dp),
+fun SearchSection(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(15.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
-    ){
-        Text("This is where the \nlogo goes", color = Color.White)
-        Icon(
-            painter = painterResource(R.drawable.search),
-            contentDescription = "Search",
-            tint = Color.Unspecified,
-            modifier = Modifier.height(24.dp)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.logo),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .size(80.dp)
+        )
+        Spacer(Modifier.width(10.dp))
+        OutlinedTextField(
+            value = query,
+            onValueChange = onQueryChange,
+            placeholder = { Text("Search by name or class", color = Color.Gray) },
+            singleLine = true,
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(8.dp)),
+            textStyle = TextStyle(color = Color.White)
         )
     }
 }
 
 @Composable
 fun CurrentCharacterSection(
-    character: Character
+    sharedVM: SharedVM,
+    nc: NavController
 ){
     Row(modifier = Modifier
         .padding(15.dp)
         .clip(RoundedCornerShape(10.dp))
-        .background(character.mediumColor)
+        .background(sharedVM.midColor.value)
         .padding(horizontal = 15.dp , vertical = 20.dp)
-        .fillMaxWidth(),
+        .fillMaxWidth()
+        .clickable { nc.navigate("details") },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         Box(
             modifier = Modifier
                 .size(50.dp)
-                .background(character.lightColor)
+                .background(sharedVM.brightColor.value)
                 .padding(5.dp),
             contentAlignment = Alignment.Center
         ){
-            Icon(
-                painter = painterResource(R.drawable.search),
+            Image(
+                painter = painterResource(sharedVM.current.value.iconRes),
                 contentDescription = "Class Icon",
                 Modifier.size(30.dp)
             )
         }
-        Text("This is where last viewed \ncharacter info goes")
+        Column{
+            Text(
+                text = sharedVM.current.value.name,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Text(
+                text = "Lv ${sharedVM.current.value.level} ${sharedVM.current.value.raceName} ${sharedVM.current.value.className}",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.White
+            )
+        }
     }
 }
 
 @Composable
-fun CharacterSection(sharedVM: SharedVM){
-    val characters = sharedVM.characters.value
-    Column(modifier = Modifier.fillMaxWidth())
-    {
+fun CharacterSection(
+    characters: List<Character>,
+    sharedVM: SharedVM,
+    nc: NavController
+){
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text="Featured Characters",
             color = Color.White,
-            //style=
             fontSize = 25.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(15.dp)
@@ -127,8 +176,8 @@ fun CharacterSection(sharedVM: SharedVM){
             contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp, bottom = 100.dp),
             modifier=Modifier.fillMaxHeight()
         ){
-            items(characters.size){
-                CharacterBox(character=characters[it], sharedVM)
+            items(characters) { character ->
+                CharacterBox(character=character, sharedVM, nc)
             }
         }
     }
@@ -137,21 +186,23 @@ fun CharacterSection(sharedVM: SharedVM){
 @Composable
 fun CharacterBox(
     character: Character,
-    sharedVM: SharedVM
+    sharedVM: SharedVM,
+    nc: NavController
 ){
     BoxWithConstraints(
         modifier = Modifier
             .padding(7.5.dp)
-            .aspectRatio(1F) //Makes width = height of GridCell (Makes it a square)
+            .aspectRatio(1F)
             .clip(RoundedCornerShape(10.dp))
             .background(character.darkColor)
-            .clickable {sharedVM.onCurrentChange(character)}
+            .clickable {
+                sharedVM.onCurrentChange(character)
+                nc.navigate("details")
+            }
     ){
-        //Colour waves
         val width = constraints.maxWidth
         val height = constraints.maxHeight
 
-        //Medium coloured path
         val mediumColoredPoint1 = Offset(0f, height * 0.3f)
         val mediumColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
         val mediumColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
@@ -169,7 +220,6 @@ fun CharacterBox(
             close()
         }
 
-        // Light colored path
         val lightPoint1 = Offset(0f, height * 0.35f)
         val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
         val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
@@ -203,10 +253,9 @@ fun CharacterBox(
             .fillMaxSize()
             .padding(15.dp)
         ){
-            Icon(
-                painter = painterResource(R.drawable.search),
+            Image(
+                painter = painterResource(character.iconRes),
                 contentDescription = "Class Icon",
-                tint = Color.White,
                 modifier = Modifier
                     .size(60.dp)
                     .align(Alignment.Center)
@@ -221,7 +270,7 @@ fun CharacterBox(
                     .offset(0.dp, -10.dp)
             )
             Text(
-                text = "Class and lv info here",
+                text = "Lv ${character.level} ${character.className}",
                 lineHeight = 26.sp,
                 color = character.darkColor,
                 modifier = Modifier

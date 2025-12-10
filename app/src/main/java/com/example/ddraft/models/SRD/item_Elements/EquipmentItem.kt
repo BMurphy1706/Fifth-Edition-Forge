@@ -1,8 +1,8 @@
-package com.example.ddraft.api.responses
+package com.example.ddraft.models
 
 import com.google.gson.annotations.SerializedName
 
-data class ApiListItem(
+data class EquipmentItem(
     @SerializedName("index")
     val index: String,
 
@@ -10,5 +10,8 @@ data class ApiListItem(
     val name: String,
 
     @SerializedName("url")
-    val url: String
+    val url: String,
+
+    @SerializedName("quantity")
+    val quantity: Int
 )

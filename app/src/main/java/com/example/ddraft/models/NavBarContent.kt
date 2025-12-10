@@ -4,6 +4,6 @@ import androidx.annotation.DrawableRes
 
 data class NavBarContent(
     val title: String,
-    @DrawableRes val iconId:Int,
+    @DrawableRes val icon:Int,
     val route: String
 )

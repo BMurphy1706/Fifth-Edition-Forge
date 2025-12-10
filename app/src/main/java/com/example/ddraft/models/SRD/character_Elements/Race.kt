@@ -11,5 +11,5 @@ data class Race(
     val size: String,
     val speed: Int,
     val ability_bonuses: List<AbilityBonus>,
-    val starting_proficiencies: List<Proficiency>
+    val traits: List<Proficiency>
 )

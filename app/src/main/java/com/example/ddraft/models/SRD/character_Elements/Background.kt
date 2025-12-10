@@ -1,6 +1,6 @@
 package com.example.ddraft.models.SRD.character_Elements
 
-import com.example.ddraft.models.SRD.character_Elements.common.EquipmentItem
+import com.example.ddraft.models.EquipmentItem
 import com.example.ddraft.models.SRD.character_Elements.common.Language
 import com.example.ddraft.models.SRD.character_Elements.common.Proficiency
 

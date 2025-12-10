@@ -1,19 +1,19 @@
 package com.example.ddraft.viewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.example.ddraft.R
+import com.example.ddraft.models.EquipmentItem
 import com.example.ddraft.models.NavBarContent
 import com.example.ddraft.models.Character
-import com.example.ddraft.ui.theme.OrangeB
-import com.example.ddraft.ui.theme.OrangeD
-import com.example.ddraft.ui.theme.OrangeM
+import com.example.ddraft.ui.theme.*
+import com.example.ddraft.viewModels.ForgeViewModel
 
-class SharedVM: ViewModel(){
-    //UI Colouring
+class SharedVM: ViewModel() {
     private val _brightColor = mutableStateOf(OrangeB)
     val brightColor: State<Color> = _brightColor
 
@@ -23,101 +23,111 @@ class SharedVM: ViewModel(){
     private val _darkColor = mutableStateOf(OrangeD)
     val darkColor: State<Color> = _darkColor
 
-    //NavBar
     private val _navItems = mutableStateOf<List<NavBarContent>>(navList())
     val navItems: State<List<NavBarContent>> = _navItems
 
     private val _navIndex = mutableIntStateOf(0)
     val navIndex: State<Int> = _navIndex
 
-    //Character list
     private val _characters = mutableStateOf<List<Character>>(demoCharacters())
     val characters: State<List<Character>> = _characters
 
-    //Current Character
-    private val _current = mutableStateOf<Character>(_characters.value[0])//make a default character with no info
+    private val _current = mutableStateOf<Character>(demoCharacters()[0])
     val current: State<Character> = _current
 
-    //Alteration functions
-    fun onCurrentChange(newCurrent: Character){
+    private val _searchQuery = mutableStateOf("")
+    val searchQuery: State<String> = _searchQuery
+
+    fun onCurrentChange(newCurrent: Character) {
         _current.value = newCurrent
-        _brightColor.value = newCurrent.lightColor
-        _midColor.value = newCurrent.mediumColor
-        _darkColor.value = newCurrent.darkColor
+        updateColorsFromClass(newCurrent.className)
     }
 
-    fun onNavIndexChange(newIdx: Int){_navIndex.intValue=newIdx}
+    fun updateSearchQuery(newQuery: String) {
+        _searchQuery.value = newQuery
+    }
 
+    fun addNewCharacter(forgeVM: ForgeViewModel) {
+        val classTheme = ClassTheme.getTheme(forgeVM.classChoice.value?.name ?: "")
 
+        // Convert Pair<ApiListItem, Int> to EquipmentItem for serialization
+        val equipmentList = forgeVM.selectedEquipment.value.map { (item, quantity) ->
+            EquipmentItem(item.index, item.name, item.url, quantity)
+        }
 
-    //Demo data functions
+        val newChar = Character(
+            name = forgeVM.name.value,
+            raceName = forgeVM.raceChosen.value?.name ?: "",
+            className = forgeVM.classChoice.value?.name ?: "",
+            backgroundName = forgeVM.bgChoice.value?.name ?: "",
+            alignment = forgeVM.align.value,
+            level = forgeVM.lv.value,
+            strength = forgeVM.strScore.value,
+            dexterity = forgeVM.dexScore.value,
+            constitution = forgeVM.conScore.value,
+            intelligence = forgeVM.intScore.value,
+            wisdom = forgeVM.wisScore.value,
+            charisma = forgeVM.chaScore.value,
+            goldPieces = forgeVM.goldPieces.value,
+            silverPieces = forgeVM.silverPieces.value,
+            copperPieces = forgeVM.copperPieces.value,
+            selectedEquipment = equipmentList,
+            iconRes = classTheme?.iconRes ?: R.drawable.search,
+            lightColor = classTheme?.light ?: OrangeB,
+            mediumColor = classTheme?.medium ?: OrangeM,
+            darkColor = classTheme?.dark ?: OrangeD
+        )
+
+        val updatedList = listOf(newChar) + _characters.value
+        _characters.value = updatedList
+        Log.d("Char created", "${newChar.name} with ${newChar.selectedEquipment.size} items")
+        onCurrentChange(newChar)
+    }
+
+    fun importCharacter(importedChar: Character) {
+        val updatedList = listOf(importedChar) + _characters.value
+        _characters.value = updatedList
+        onCurrentChange(importedChar)
+        Log.d("Char imported", "${importedChar.name} with ${importedChar.selectedEquipment.size} items")
+    }
+
+    fun onNavIndexChange(newIdx: Int) { _navIndex.intValue = newIdx }
+
+    fun updateColorsFromClass(className: String?) {
+        ClassTheme.getTheme(className)?.let { theme ->
+            _brightColor.value = theme.light
+            _midColor.value = theme.medium
+            _darkColor.value = theme.dark
+        }
+    }
+
     private fun demoCharacters(): List<Character> {
-        val testCharacters = listOf(
+        return listOf(
             Character(
                 name = "Amber Knight",
-                iconId = R.drawable.search,
-                lightColor = Color(0xFFFFB550), // Light orange tone
-                mediumColor = Color(0xFFFF7A30), // Mid orange
-                darkColor = Color(0xFFCC4A1F) // Darker, deeper variant
+                raceName = "Human",
+                className = "Barbarian",
+                iconRes = R.drawable.barbarian,
+                lightColor = BarbarianLight,
+                mediumColor = BarbarianMedium,
+                darkColor = BarbarianDark
             ),
             Character(
-                name = "Verdant Sage",
-                iconId = R.drawable.search,
-                lightColor = Color(0xFF81D97B),  // Light green
-                mediumColor = Color(0xFF4CAF50), // Medium green
-                darkColor = Color(0xFF2E7D32)   // Dark green
-            ),
-            Character(
-                name = "Azure Whisper",
-                iconId = R.drawable.search,
-                lightColor = Color(0xFF6EC6FF),  // Light blue
-                mediumColor = Color(0xFF2196F3), // Medium blue
-                darkColor = Color(0xFF0B5BC5)   // Dark blue
-            ),
-            Character(
-                name = "Crimson Dawn",
-                iconId = R.drawable.search,
-                lightColor = Color(0xFFFF867C),  // Light red-orange
-                mediumColor = Color(0xFFE53935), // Mid red
-                darkColor = Color(0xFFB71C1C)   // Darker red
-            ),
-            Character(
-                name = "Violet Dreamer",
-                iconId = R.drawable.search,
-                lightColor = Color(0xFFD1A3FF),  // Light purple
-                mediumColor = Color(0xFF9C27B0), // Medium purple
-                darkColor = Color(0xFF6A0080)   // Deep purple
+                name = "Golden Sage",
+                raceName = "Elf",
+                className = "Cleric",
+                iconRes = R.drawable.cleric,
+                lightColor = ClericLight,
+                mediumColor = ClericMedium,
+                darkColor = ClericDark
             )
         )
-        return testCharacters
     }
 
-    private fun navList():List<NavBarContent> {
-        val testNav = listOf(
-            NavBarContent(
-                title = "Home",
-                iconId = 0,
-                "home"
-            ),
-
-            NavBarContent(
-                title = "Forge",
-                iconId = 0,
-                "forge"
-            ),
-
-            NavBarContent(
-                title = "Simulator",
-                iconId = 0,
-                "home"
-            ),
-
-            NavBarContent(
-                title = "Port",
-                iconId = 0,
-                "port"
-            )
-        )
-        return testNav
-    }
+    private fun navList(): List<NavBarContent> = listOf(
+        NavBarContent(title = "Tavern", icon = R.drawable.tavern, "home"),
+        NavBarContent(title = "Forge", icon = R.drawable.sns, "forge"),
+        NavBarContent(title = "Dice", icon = R.drawable.d20, "dice"),
+        NavBarContent(title = "Port", icon = R.drawable.boat, "port")
+    )
 }
